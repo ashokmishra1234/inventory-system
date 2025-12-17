@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Package, AlertTriangle, DollarSign, Activity } from 'lucide-react';
 import client from '../api/client';
 import { Card } from '../components/ui/Card';
-import { Product, Log } from '../types';
+import { RetailerInventoryItem, Log } from '../types';
 
 const Dashboard = () => {
     const [stats, setStats] = useState({ count: 0, value: 0, lowStock: 0 });
@@ -11,7 +11,7 @@ const Dashboard = () => {
     useEffect(() => {
         const loadData = async () => {
              const [prodRes, logRes] = await Promise.all([
-                 client.get<Product[]>('/products'),
+                 client.get<RetailerInventoryItem[]>('/api/inventory'),
                  client.get<Log[]>('/logs')
              ]);
              

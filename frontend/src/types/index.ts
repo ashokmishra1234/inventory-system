@@ -12,6 +12,34 @@ export interface AuthResponse {
   };
 }
 
+export interface MasterCatalogItem {
+    id: string;
+    sku: string;
+    name: string;
+    category: string;
+    standard_price: number;
+    wholesaler_info?: {
+        name: string;
+        contact: string;
+    };
+}
+
+export interface RetailerInventoryItem {
+    id: string;
+    retailer_id: string;
+    catalog_item_id?: string;
+    custom_name?: string;
+    sku: string;
+    quantity: number;
+    price: number;
+    low_stock_threshold: number;
+    discount_rules?: {
+        max_percent: number;
+        approval_required: boolean;
+    };
+    master_catalog?: MasterCatalogItem;
+}
+
 export interface Product {
     id: string;
     name: string;

@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const logRoutes = require('./routes/logRoutes');
+const apiRoutes = require('./routes/apiRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/logs', logRoutes);
+app.use('/api', apiRoutes);
 
 // Error Handling
 app.use(errorHandler);

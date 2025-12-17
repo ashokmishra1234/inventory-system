@@ -18,7 +18,7 @@ export const DashboardLayout = () => {
                 
                 <nav className="space-y-1 flex-1">
                     <NavItem to="/" icon={<LayoutDashboard size={20}/>} label="Dashboard" active={location.pathname === '/'} />
-                    <NavItem to="/products" icon={<Package size={20}/>} label="Products" active={location.pathname === '/products'} />
+                    <NavItem to="/inventory" icon={<Package size={20}/>} label="My Inventory" active={location.pathname === '/inventory'} />
                     {user?.role === 'admin' && (
                         <NavItem to="/logs" icon={<ClipboardList size={20}/>} label="Audit Logs" active={location.pathname === '/logs'} />
                     )}

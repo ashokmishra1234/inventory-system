@@ -6,7 +6,7 @@ const signup = async (req, res, next) => {
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
     name: Joi.string().required(),
-    role: Joi.string().valid('admin', 'manager', 'viewer').default('viewer')
+    role: Joi.string().valid('admin', 'manager', 'viewer').default('manager')
   });
 
   const { error } = schema.validate(req.body);
@@ -40,10 +40,21 @@ const signup = async (req, res, next) => {
       ]);
 
     if (profileError) {
-       // Rollback auth user creation if needed (manual compensation)
-       // For now, just throw
        await supabase.auth.admin.deleteUser(user.id);
        throw new Error(profileError.message);
+    }
+
+    // 3. Create Retailer Profile (Private DB Link)
+    // Every user is a retailer in this system for now
+    const { error: retailerError } = await supabase
+        .from('retailers')
+        .insert([
+            { id: user.id, shop_name: `${name}'s Shop` }
+        ]);
+
+    if (retailerError) {
+        console.error('Failed to create retailer profile:', retailerError);
+        // non-blocking for now, can be fixed manually or via trigger
     }
 
     res.status(201).json({ message: 'User created successfully', user: { id: user.id, email, name, role } });

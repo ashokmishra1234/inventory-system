@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const logRoutes = require('./routes/logRoutes');
 const apiRoutes = require('./routes/apiRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -33,7 +34,8 @@ const router = express.Router();
 router.use('/auth', authRoutes);
 router.use('/products', productRoutes);
 router.use('/logs', logRoutes);
-router.use('/api', apiRoutes); // This was already named apiRoutes, maybe rename to miscRoutes? Or keep. 
+router.use('/payment', paymentRoutes);
+router.use('/api', apiRoutes); // This was already named apiRoutes, maybe rename to miscRoutes? Or keep.  
 // Note: apiRoutes likely contains /upload or similar. 
 
 // Mount routes for both Localhost (root) and Vercel (/api prefix)

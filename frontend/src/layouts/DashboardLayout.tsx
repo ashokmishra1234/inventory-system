@@ -55,6 +55,13 @@ export const DashboardLayout = () => {
                         active={location.pathname === '/inventory'} 
                         onClick={() => setIsSidebarOpen(false)}
                     />
+                    <NavItem 
+                        to="/billing" 
+                        icon={<ClipboardList size={20}/>} // Reusing icon or pick new one like 'CreditCard'
+                        label="Billing / POS" 
+                        active={location.pathname === '/billing'} 
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
                     {user?.role === 'admin' && (
                         <NavItem 
                             to="/logs" 

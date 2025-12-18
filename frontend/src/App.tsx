@@ -8,7 +8,9 @@ import { AuthLayout } from './layouts/AuthLayout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import Products from './pages/Products';
 import PrivateInventory from './pages/PrivateInventory';
+import Billing from './pages/Billing';
 import Logs from './pages/Logs';
 
 const ProtectedRoute = () => {
@@ -38,8 +40,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
              <Route element={<DashboardLayout />}>
                 <Route path="/" element={<Dashboard />} />
-                <Route path="/inventory" element={<PrivateInventory />} />
-                <Route path="/logs" element={<Logs />} />
+                <Route path="products" element={<Products />} />
+                <Route path="inventory" element={<PrivateInventory />} />
+                <Route path="billing" element={<Billing />} />
+                <Route path="logs" element={<Logs />} />
              </Route>
           </Route>
 

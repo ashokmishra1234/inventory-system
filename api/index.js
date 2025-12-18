@@ -6,10 +6,12 @@ module.exports = (req, res) => {
     app(req, res);
   } catch (error) {
     console.error("Critical Startup Error:", error);
-    res.status(500).json({ 
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ 
       error: "Server Startup Failed (Module Load)", 
       details: error.message, 
       stack: error.stack 
-    });
+    }));
   }
 };

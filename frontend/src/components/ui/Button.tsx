@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
   isLoading?: boolean;
 }
 
@@ -19,7 +19,8 @@ export const Button = ({
     primary: "bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20",
     secondary: "bg-slate-700 hover:bg-slate-600 text-white",
     danger: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
-    ghost: "hover:bg-slate-800 text-slate-400 hover:text-white"
+    ghost: "hover:bg-slate-800 text-slate-400 hover:text-white",
+    outline: "border-2 border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white bg-transparent"
   };
 
   return (

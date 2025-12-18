@@ -4,7 +4,6 @@ import client from '../api/client';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Input } from '../components/ui/Input';
-import { Modal } from '../components/ui/Modal';
 import { MasterCatalogItem } from '../types';
 import toast from 'react-hot-toast';
 

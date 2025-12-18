@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Package, AlertTriangle, DollarSign, Activity } from 'lucide-react';
 import client from '../api/client';
 import { Card } from '../components/ui/Card';

@@ -13,8 +13,8 @@ const inventorySchema = z.object({
     sku: z.string().min(1, "SKU is required"),
     price: z.string().transform(val => parseFloat(val)).refine(val => val >= 0, "Price must be positive"),
     quantity: z.string().transform(val => parseInt(val, 10)).refine(val => val >= 0, "Quantity must be positive"),
-    low_stock_threshold: z.string().transform(val => parseInt(val, 10)).default("5"),
-    max_discount: z.string().transform(val => parseFloat(val)).default("0"),
+    low_stock_threshold: z.string().transform(val => parseInt(val, 10)).default(5),
+    max_discount: z.string().transform(val => parseFloat(val)).default(0),
 });
 
 interface AddInventoryFormProps {

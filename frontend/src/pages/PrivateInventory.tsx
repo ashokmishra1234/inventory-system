@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Plus, Search, Edit, Trash2, AlertTriangle, X, Check } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Plus, Edit, Trash2, AlertTriangle, X, Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import client from '../api/client';
 import { useAuth } from '../context/AuthContext';
-import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
-import { Input } from '../components/ui/Input';
 import CatalogSearch from '../components/CatalogSearch';
 import AddInventoryForm from '../components/AddInventoryForm';
 import { RetailerInventoryItem, MasterCatalogItem } from '../types';

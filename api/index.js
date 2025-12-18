@@ -1,12 +1,13 @@
-const app = require('../src/app');
-
+// Vercel Serverless Function Wrapper
 module.exports = (req, res) => {
   try {
+    // Lazy load the app to catch initialization errors
+    const app = require('../src/app');
     app(req, res);
   } catch (error) {
     console.error("Critical Startup Error:", error);
     res.status(500).json({ 
-      error: "Server Startup Failed", 
+      error: "Server Startup Failed (Module Load)", 
       details: error.message, 
       stack: error.stack 
     });

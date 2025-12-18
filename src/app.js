@@ -23,14 +23,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+// Routes
 app.get('/', (req, res) => {
   res.json({ message: 'Inventory Management API is running' });
 });
 
-app.use('/auth', authRoutes);
-app.use('/products', productRoutes);
-app.use('/logs', logRoutes);
-app.use('/api', apiRoutes);
+// Master Router
+const router = express.Router();
+router.use('/auth', authRoutes);
+router.use('/products', productRoutes);
+router.use('/logs', logRoutes);
+router.use('/api', apiRoutes); // This was already named apiRoutes, maybe rename to miscRoutes? Or keep. 
+// Note: apiRoutes likely contains /upload or similar. 
+
+// Mount routes for both Localhost (root) and Vercel (/api prefix)
+app.use('/api', router); // For Vercel: /api/auth/login -> Matches
+app.use('/', router);    // For Localhost: /auth/login -> Matches
 
 // Error Handling
 app.use(errorHandler);

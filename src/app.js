@@ -9,6 +9,7 @@ const productRoutes = require('./routes/productRoutes');
 const logRoutes = require('./routes/logRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const blockchainRoutes = require('./routes/blockchainRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -35,6 +36,7 @@ router.use('/auth', authRoutes);
 router.use('/products', productRoutes);
 router.use('/logs', logRoutes);
 router.use('/payment', paymentRoutes);
+router.use('/blockchain', blockchainRoutes);
 router.use('/api', apiRoutes); // This was already named apiRoutes, maybe rename to miscRoutes? Or keep.  
 // Note: apiRoutes likely contains /upload or similar. 
 

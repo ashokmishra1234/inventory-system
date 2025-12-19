@@ -12,6 +12,7 @@ import Products from './pages/Products';
 import PrivateInventory from './pages/PrivateInventory';
 import Billing from './pages/Billing';
 import Logs from './pages/Logs';
+import BlockchainAudit from './pages/BlockchainAudit';
 
 const ProtectedRoute = () => {
     const { user, isLoading } = useAuth();
@@ -44,6 +45,7 @@ function App() {
                 <Route path="inventory" element={<PrivateInventory />} />
                 <Route path="billing" element={<Billing />} />
                 <Route path="logs" element={<Logs />} />
+                <Route path="blockchain" element={<BlockchainAudit />} />
              </Route>
           </Route>
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Package, ClipboardList, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Package, ClipboardList, LogOut, Menu, X, Link as LinkIcon } from 'lucide-react';
 import { cn } from '../utils/cn';
 
 export const DashboardLayout = () => {
@@ -57,9 +57,16 @@ export const DashboardLayout = () => {
                     />
                     <NavItem 
                         to="/billing" 
-                        icon={<ClipboardList size={20}/>} // Reusing icon or pick new one like 'CreditCard'
+                        icon={<ClipboardList size={20}/>}
                         label="Billing / POS" 
                         active={location.pathname === '/billing'} 
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
+                    <NavItem 
+                        to="/blockchain" 
+                        icon={<LinkIcon size={20}/>}
+                        label="Blockchain Audit" 
+                        active={location.pathname === '/blockchain'} 
                         onClick={() => setIsSidebarOpen(false)}
                     />
                     {user?.role === 'admin' && (

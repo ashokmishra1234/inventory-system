@@ -1,5 +1,6 @@
 const supabase = require('../config/supabase');
 const Joi = require('joi');
+const blockchainService = require('../services/blockchainService');
 
 // @desc    Get My Inventory
 // @route   GET /api/inventory
@@ -60,6 +61,19 @@ const addToInventory = async (req, res) => {
     
     if (dbError) throw dbError;
 
+    // Log to blockchain (async - don't wait)
+    blockchainService.recordActionAsync(
+      'ProductAdded',
+      req.body.sku,
+      req.body.quantity || 0,
+      req.user.id,
+      {
+        productName: req.body.custom_name,
+        price: req.body.price,
+        catalogLinked: !!req.body.catalog_item_id
+      }
+    );
+
     res.status(201).json(data);
   } catch (err) {
       res.status(500).json({ message: err.message });
@@ -82,6 +96,22 @@ const updateInventory = async (req, res) => {
             .single();
 
         if (error) throw error;
+        
+        // Log to blockchain if quantity changed
+        if (req.body.quantity !== undefined) {
+            blockchainService.recordActionAsync(
+                'StockAdjusted',
+                data.sku,
+                req.body.quantity - (data.quantity || 0), // Calculate change
+                req.user.id,
+                {
+                    oldQuantity: data.quantity,
+                    newQuantity: req.body.quantity,
+                    reason: 'Manual adjustment'
+                }
+            );
+        }
+        
         res.json(data);
     } catch (err) {
         res.status(400).json({ message: 'Update failed' });
@@ -102,6 +132,18 @@ const removeInventory = async (req, res) => {
             .eq('retailer_id', req.user.id); // Security check
 
         if (error) throw error;
+        
+        // Log to blockchain
+        blockchainService.recordActionAsync(
+            'ProductRemoved',
+            id, // Use ID as SKU identifier
+            0,
+            req.user.id,
+            {
+                reason: 'Deleted by user'
+            }
+        );
+        
         res.json({ message: 'Item removed' });
     } catch (err) {
         res.status(500).json({ message: 'Delete failed' });

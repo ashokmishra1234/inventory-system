@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Environment Configuration Guide</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="environment-configuration-guide">Environment Configuration Guide</h1>
+<h2 id="-what-you-need-to-fill-in-env">📋 What You Need to Fill in <code>.env</code></h2>
+<p>Your <code>.env</code> file should have these variables. Here's what each one means and where to get it:</p>
+<hr>
+<h2 id="-required-for-backend-already-set">✅ Required for Backend (Already Set)</h2>
+<pre><code class="language-env">PORT=5000
+</code></pre>
+<p><strong>What it is:</strong> Port number for the backend server<br>
+<strong>Action:</strong> ✅ Keep as is (no change needed)</p>
+<hr>
+<h2 id="-required-for-supabase-you-need-to-fill">✅ Required for Supabase (You Need to Fill)</h2>
+<h3 id="1-supabase_url">1. SUPABASE_URL</h3>
+<pre><code class="language-env">SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
+</code></pre>
+<p><strong>What it is:</strong> Your Supabase project URL<br>
+<strong>Where to get it:</strong></p>
+<ol>
+<li>Go to <a href="https://supabase.com/dashboard">https://supabase.com/dashboard</a></li>
+<li>Select your project</li>
+<li>Go to Settings → API</li>
+<li>Copy the <strong>Project URL</strong></li>
+</ol>
+<hr>
+<h3 id="2-supabase_anon_key">2. SUPABASE_ANON_KEY</h3>
+<pre><code class="language-env">SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+</code></pre>
+<p><strong>What it is:</strong> Public API key (safe for frontend)<br>
+<strong>Where to get it:</strong></p>
+<ol>
+<li>Same page as above (Settings → API)</li>
+<li>Copy <strong>anon public</strong> key</li>
+<li>It's a long JWT token</li>
+</ol>
+<hr>
+<h3 id="3-supabase_service_role_key">3. SUPABASE_SERVICE_ROLE_KEY</h3>
+<pre><code class="language-env">SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+</code></pre>
+<p><strong>What it is:</strong> Private API key (backend only, bypasses RLS)<br>
+<strong>Where to get it:</strong></p>
+<ol>
+<li>Same page (Settings → API)</li>
+<li>Copy <strong>service_role secret</strong> key</li>
+<li>⚠️ NEVER expose this to frontend!</li>
+</ol>
+<hr>
+<h3 id="4-jwt_secret">4. JWT_SECRET</h3>
+<pre><code class="language-env">JWT_SECRET=your-secret-key-here
+</code></pre>
+<p><strong>What it is:</strong> Secret for JWT token signing<br>
+<strong>What to use:</strong></p>
+<ul>
+<li><strong>Option A:</strong> Use the same value as <code>SUPABASE_SERVICE_ROLE_KEY</code></li>
+<li><strong>Option B:</strong> Generate a random string: <code>openssl rand -base64 32</code></li>
+</ul>
+<hr>
+<h2 id="-optional-blockchain-configuration">🔗 Optional: Blockchain Configuration</h2>
+<h3 id="5-blockchain_enabled">5. BLOCKCHAIN_ENABLED</h3>
+<pre><code class="language-env">BLOCKCHAIN_ENABLED=false
+</code></pre>
+<p><strong>What it is:</strong> Toggle to enable/disable blockchain logging<br>
+<strong>Options:</strong></p>
+<ul>
+<li><code>false</code> - Blockchain disabled (default)</li>
+<li><code>true</code> - Blockchain enabled</li>
+</ul>
+<p><strong>Action:</strong> Keep <code>false</code> until you configure the other blockchain variables</p>
+<hr>
+<h3 id="6-ethereum_rpc_url">6. ETHEREUM_RPC_URL</h3>
+<pre><code class="language-env">ETHEREUM_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
+</code></pre>
+<p><strong>What it is:</strong> Ethereum network endpoint<br>
+<strong>Where to get it:</strong></p>
+<p><strong>Option A: Infura (Recommended)</strong></p>
+<ol>
+<li>Go to <a href="https://infura.io">https://infura.io</a></li>
+<li>Sign up (free)</li>
+<li>Create a new project</li>
+<li>Select &quot;Web3 API&quot;</li>
+<li>Go to project → Settings → Endpoints</li>
+<li>Copy the <strong>Sepolia</strong> endpoint URL
+<ul>
+<li>Example: <code>https://sepolia.infura.io/v3/a1b2c3d4...</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>Option B: Alchemy</strong></p>
+<ol>
+<li>Go to <a href="https://www.alchemy.com">https://www.alchemy.com</a></li>
+<li>Create an app</li>
+<li>Choose &quot;Ethereum&quot; → &quot;Sepolia&quot; testnet</li>
+<li>Copy the HTTPS endpoint</li>
+</ol>
+<hr>
+<h3 id="7-contract_address">7. CONTRACT_ADDRESS</h3>
+<pre><code class="language-env">CONTRACT_ADDRESS=0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb8
+</code></pre>
+<p><strong>What it is:</strong> Your deployed smart contract address<br>
+<strong>Where to get it:</strong></p>
+<ol>
+<li>This is the address you got when you deployed the <code>InventoryAudit</code> contract</li>
+<li>It starts with <code>0x</code> and is 42 characters long</li>
+<li>You can find it in:
+<ul>
+<li>Your deployment transaction receipt</li>
+<li>MetaMask transaction history</li>
+<li>Etherscan (if you have the transaction hash)</li>
+</ul>
+</li>
+</ol>
+<p><strong>Example:</strong> <code>0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb8</code></p>
+<hr>
+<h3 id="8-backend_private_key">8. BACKEND_PRIVATE_KEY</h3>
+<pre><code class="language-env">BACKEND_PRIVATE_KEY=0xabcdef1234567890...
+</code></pre>
+<p><strong>What it is:</strong> Private key of the wallet that deployed the contract<br>
+<strong>Where to get it:</strong></p>
+<ol>
+<li>Open MetaMask</li>
+<li>Click the account that deployed the contract</li>
+<li>Click the 3 dots → Account Details</li>
+<li>Click &quot;Export Private Key&quot;</li>
+<li>Enter your password</li>
+<li>Copy the private key (starts with <code>0x</code>)</li>
+</ol>
+<p><strong>⚠️ CRITICAL SECURITY:</strong></p>
+<ul>
+<li>NEVER share this key</li>
+<li>NEVER commit it to Git</li>
+<li>This wallet needs ETH to pay gas fees</li>
+</ul>
+<hr>
+<h3 id="9-chain_id">9. CHAIN_ID</h3>
+<pre><code class="language-env">CHAIN_ID=11155111
+</code></pre>
+<p><strong>What it is:</strong> Ethereum network identifier<br>
+<strong>Options:</strong></p>
+<ul>
+<li><code>11155111</code> - Sepolia testnet (FREE, recommended for testing)</li>
+<li><code>1</code> - Ethereum mainnet (EXPENSIVE)</li>
+<li><code>137</code> - Polygon mainnet (CHEAP)</li>
+<li><code>80001</code> - Polygon Mumbai testnet (FREE)</li>
+</ul>
+<p><strong>Action:</strong> Keep <code>11155111</code> for Sepolia testnet</p>
+<hr>
+<h2 id="-your-env-file-should-look-like-this">📝 Your <code>.env</code> File Should Look Like This</h2>
+<pre><code class="language-env"># Backend Configuration
+PORT=5000
+
+# Supabase Configuration
+SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ...
+JWT_SECRET=your-secret-key-or-same-as-service-role-key
+
+# Blockchain Configuration (Optional)
+BLOCKCHAIN_ENABLED=false
+ETHEREUM_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
+CONTRACT_ADDRESS=0xYOUR_DEPLOYED_CONTRACT_ADDRESS
+BACKEND_PRIVATE_KEY=0xYOUR_WALLET_PRIVATE_KEY
+CHAIN_ID=11155111
+</code></pre>
+<hr>
+<h2 id="-checklist">✅ Checklist</h2>
+<h3 id="required-to-run-backend">Required (To Run Backend):</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> <code>SUPABASE_URL</code> - From Supabase dashboard</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> <code>SUPABASE_ANON_KEY</code> - From Supabase dashboard</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> <code>SUPABASE_SERVICE_ROLE_KEY</code> - From Supabase dashboard</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> <code>JWT_SECRET</code> - Same as service role key or generate random</li>
+</ul>
+<h3 id="optional-to-enable-blockchain">Optional (To Enable Blockchain):</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> Create Infura/Alchemy account</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> <code>ETHEREUM_RPC_URL</code> - From Infura/Alchemy</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> <code>CONTRACT_ADDRESS</code> - Your deployed contract address</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> <code>BACKEND_PRIVATE_KEY</code> - From MetaMask (wallet that deployed contract)</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> Fund wallet with Sepolia ETH from <a href="https://sepoliafaucet.com">faucet</a></li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> Set <code>BLOCKCHAIN_ENABLED=true</code></li>
+</ul>
+<hr>
+<h2 id="-quick-start">🚀 Quick Start</h2>
+<h3 id="test-without-blockchain-database-only">Test Without Blockchain (Database Only)</h3>
+<ol>
+<li>Fill only the Supabase variables</li>
+<li>Keep <code>BLOCKCHAIN_ENABLED=false</code></li>
+<li>Run <code>npm run dev</code></li>
+<li>✅ Backend works with database only</li>
+</ol>
+<h3 id="enable-blockchain-later">Enable Blockchain Later</h3>
+<ol>
+<li>Get Infura key</li>
+<li>Add your contract address</li>
+<li>Add your private key</li>
+<li>Get test ETH from faucet</li>
+<li>Set <code>BLOCKCHAIN_ENABLED=true</code></li>
+<li>Restart server</li>
+<li>✅ All inventory actions now log to blockchain!</li>
+</ol>
+<hr>
+<h2 id="-need-help">🆘 Need Help?</h2>
+<h3 id="get-sepolia-test-eth-free">Get Sepolia Test ETH (FREE)</h3>
+<ul>
+<li><a href="https://sepoliafaucet.com">Sepolia Faucet</a></li>
+<li><a href="https://sepoliafaucet.com/">Alchemy Faucet</a></li>
+<li>Need 0.1 ETH to start</li>
+</ul>
+<h3 id="verify-your-setup">Verify Your Setup</h3>
+<pre><code class="language-bash">npm run dev
+</code></pre>
+<p><strong>Expected output:</strong></p>
+<pre><code>Server running on port 5000
+✅ Blockchain connected successfully  # (if enabled)
+📍 Contract Address: 0x...
+💰 Wallet balance: 0.5 ETH
+</code></pre>
+<hr>
+<p><em>Save this file as reference when configuring your <code>.env</code></em></p>
+
+            
+            
+        </body>
+        </html>

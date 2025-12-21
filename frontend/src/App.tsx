@@ -12,7 +12,7 @@ import Products from './pages/Products';
 import PrivateInventory from './pages/PrivateInventory';
 import Billing from './pages/Billing';
 import Logs from './pages/Logs';
-import BlockchainAudit from './pages/BlockchainAudit';
+import LandingPage from './pages/LandingPage';
 
 const ProtectedRoute = () => {
     const { user, isLoading } = useAuth();
@@ -31,16 +31,19 @@ function App() {
             }}
         />
         <Routes>
-          {/* Public Routes */}
+          {/* Public Landing Page */}
+          <Route path="/" element={<LandingPage />} />
+
+          {/* Auth Routes */}
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
           </Route>
 
-          {/* Protected Routes */}
+          {/* Protected Routes (Dashboard) */}
           <Route element={<ProtectedRoute />}>
-             <Route element={<DashboardLayout />}>
-                <Route path="/" element={<Dashboard />} />
+             <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route index element={<Dashboard />} />
                 <Route path="products" element={<Products />} />
                 <Route path="inventory" element={<PrivateInventory />} />
                 <Route path="billing" element={<Billing />} />
@@ -49,6 +52,7 @@ function App() {
              </Route>
           </Route>
 
+          {/* Catch all - Redirect to Landing Page */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>

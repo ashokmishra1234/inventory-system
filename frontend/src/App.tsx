@@ -14,6 +14,9 @@ import Billing from './pages/Billing';
 import Logs from './pages/Logs';
 import BlockchainAudit from './pages/BlockchainAudit';
 import LandingPage from './pages/LandingPage';
+import Features from './pages/Features';
+import BlockchainInfo from './pages/BlockchainInfo';
+import Pricing from './pages/Pricing';
 
 const ProtectedRoute = () => {
     const { user, isLoading } = useAuth();
@@ -32,8 +35,11 @@ function App() {
             }}
         />
         <Routes>
-          {/* Public Landing Page */}
+          {/* Public Pages */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/blockchain-info" element={<BlockchainInfo />} />
+          <Route path="/pricing" element={<Pricing />} />
 
           {/* Auth Routes */}
           <Route element={<AuthLayout />}>

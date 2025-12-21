@@ -25,7 +25,7 @@ const Login = () => {
         try {
             await login(data);
             toast.success('Welcome back!');
-            navigate('/');
+            navigate('/dashboard');
         } catch (err: any) {
             toast.error(err.response?.data?.message || 'Login failed');
         }

@@ -42,39 +42,39 @@ export const DashboardLayout = () => {
                 
                 <nav className="space-y-1 flex-1">
                     <NavItem 
-                        to="/" 
+                        to="/dashboard" 
                         icon={<LayoutDashboard size={20}/>} 
                         label="Dashboard" 
-                        active={location.pathname === '/'} 
+                        active={location.pathname === '/dashboard'} 
                         onClick={() => setIsSidebarOpen(false)}
                     />
                     <NavItem 
-                        to="/inventory" 
+                        to="/dashboard/inventory" 
                         icon={<Package size={20}/>} 
                         label="My Inventory" 
-                        active={location.pathname === '/inventory'} 
+                        active={location.pathname === '/dashboard/inventory'} 
                         onClick={() => setIsSidebarOpen(false)}
                     />
                     <NavItem 
-                        to="/billing" 
+                        to="/dashboard/billing" 
                         icon={<ClipboardList size={20}/>}
                         label="Billing / POS" 
-                        active={location.pathname === '/billing'} 
+                        active={location.pathname === '/dashboard/billing'} 
                         onClick={() => setIsSidebarOpen(false)}
                     />
                     <NavItem 
-                        to="/blockchain" 
+                        to="/dashboard/blockchain" 
                         icon={<LinkIcon size={20}/>}
                         label="Blockchain Audit" 
-                        active={location.pathname === '/blockchain'} 
+                        active={location.pathname === '/dashboard/blockchain'} 
                         onClick={() => setIsSidebarOpen(false)}
                     />
                     {user?.role === 'admin' && (
                         <NavItem 
-                            to="/logs" 
+                            to="/dashboard/logs" 
                             icon={<ClipboardList size={20}/>} 
                             label="Audit Logs" 
-                            active={location.pathname === '/logs'} 
+                            active={location.pathname === '/dashboard/logs'} 
                             onClick={() => setIsSidebarOpen(false)}
                         />
                     )}

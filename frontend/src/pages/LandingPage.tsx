@@ -145,6 +145,110 @@ const LandingPage = () => {
         </div>
       </div>
 
+      {/* Blockchain Section */}
+      <div id="blockchain" className="py-24 bg-white border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row items-center gap-16">
+                <div className="flex-1">
+                    <div className="inline-block p-3 bg-purple-100 rounded-2xl mb-6">
+                        <ShieldCheck className="w-8 h-8 text-purple-600" />
+                    </div>
+                    <h2 className="text-4xl font-bold text-gray-900 mb-6">Trust built on code, <br />not promises.</h2>
+                    <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                        In traditional systems, history can be edited. In our platform, every critical inventory action is recorded on the <strong>Ethereum Blockchain</strong> (Sepolia Testnet).
+                    </p>
+                    <ul className="space-y-4">
+                        {[
+                            "Cannot be deleted or modified by anyone (even us)",
+                            "Publicly verifiable audit trail for investors",
+                            "Prevents internal fraud and stock manipulation",
+                            "Cryptographically secured transactions"
+                        ].map((item, i) => (
+                            <li key={i} className="flex items-center gap-3">
+                                <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                                    <div className="w-2 h-2 rounded-full bg-green-600"></div>
+                                </div>
+                                <span className="text-gray-700 font-medium">{item}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="flex-1 bg-slate-900 p-8 rounded-2xl shadow-xl w-full">
+                    <div className="flex items-center gap-2 mb-6 border-b border-slate-800 pb-4">
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span className="text-slate-500 text-sm ml-2">Blockchain Explorer</span>
+                    </div>
+                    <div className="space-y-4 font-mono text-sm">
+                        <div className="bg-slate-800/50 p-4 rounded-lg border-l-4 border-green-500">
+                            <div className="text-green-400 mb-1">Status: Confirmed</div>
+                            <div className="text-slate-300">Hash: 0x7f...3a2b</div>
+                            <div className="text-slate-500 mt-2">Action: Stock Updated (+50 Units)</div>
+                        </div>
+                        <div className="bg-slate-800/50 p-4 rounded-lg border-l-4 border-blue-500">
+                            <div className="text-blue-400 mb-1">Status: Confirmed</div>
+                            <div className="text-slate-300">Hash: 0x8a...9c1d</div>
+                            <div className="text-slate-500 mt-2">Action: New Product Added</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      {/* Pricing Section */}
+      <div id="pricing" className="py-24 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-gray-900 mb-4">Simple, transparent pricing</h2>
+                <p className="text-gray-600 text-lg">Start for free, upgrade as you grow.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                {/* Free Tier */}
+                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Starter</h3>
+                    <div className="text-4xl font-bold text-gray-900 mb-6">₹0<span className="text-lg text-gray-500 font-normal">/mo</span></div>
+                    <p className="text-gray-600 mb-8">Perfect for small shops just getting digital.</p>
+                    <Link to="/signup" className="block w-full py-3 px-4 bg-gray-100 text-gray-900 font-semibold rounded-lg text-center hover:bg-gray-200 transition-colors">Get Started</Link>
+                    <ul className="mt-8 space-y-4">
+                        <li className="flex items-center gap-3 text-sm text-gray-600"><ShieldCheck className="w-4 h-4 text-green-500"/> Up to 100 Products</li>
+                        <li className="flex items-center gap-3 text-sm text-gray-600"><ShieldCheck className="w-4 h-4 text-green-500"/> Basic Analytics</li>
+                        <li className="flex items-center gap-3 text-sm text-gray-600"><ShieldCheck className="w-4 h-4 text-green-500"/> Single User</li>
+                    </ul>
+                </div>
+
+                {/* Pro Tier */}
+                <div className="bg-slate-900 p-8 rounded-2xl shadow-xl transform scale-105 relative">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">Most Popular</div>
+                    <h3 className="text-xl font-bold text-white mb-2">Growth</h3>
+                    <div className="text-4xl font-bold text-white mb-6">₹999<span className="text-lg text-slate-400 font-normal">/mo</span></div>
+                    <p className="text-slate-400 mb-8">For growing businesses needing power.</p>
+                    <Link to="/signup" className="block w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg text-center hover:bg-blue-700 transition-colors">Start Free Trial</Link>
+                    <ul className="mt-8 space-y-4">
+                        <li className="flex items-center gap-3 text-sm text-slate-300"><ShieldCheck className="w-4 h-4 text-blue-400"/> Unlimited Products</li>
+                        <li className="flex items-center gap-3 text-sm text-slate-300"><ShieldCheck className="w-4 h-4 text-blue-400"/> Blockchain Audit Logs</li>
+                        <li className="flex items-center gap-3 text-sm text-slate-300"><ShieldCheck className="w-4 h-4 text-blue-400"/> AI Inventory Assistant</li>
+                        <li className="flex items-center gap-3 text-sm text-slate-300"><ShieldCheck className="w-4 h-4 text-blue-400"/> 3 Staff Accounts</li>
+                    </ul>
+                </div>
+
+                {/* Enterprise Tier */}
+                <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all border border-gray-100">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Enterprise</h3>
+                    <div className="text-4xl font-bold text-gray-900 mb-6">Custom</div>
+                    <p className="text-gray-600 mb-8">For large retail chains.</p>
+                    <Link to="/signup" className="block w-full py-3 px-4 bg-white border-2 border-gray-900 text-gray-900 font-semibold rounded-lg text-center hover:bg-gray-50 transition-colors">Contact Sales</Link>
+                    <ul className="mt-8 space-y-4">
+                        <li className="flex items-center gap-3 text-sm text-gray-600"><ShieldCheck className="w-4 h-4 text-green-500"/> Custom API Access</li>
+                        <li className="flex items-center gap-3 text-sm text-gray-600"><ShieldCheck className="w-4 h-4 text-green-500"/> Dedicated Support</li>
+                        <li className="flex items-center gap-3 text-sm text-gray-600"><ShieldCheck className="w-4 h-4 text-green-500"/> On-premise Deployment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
       {/* Footer */}
       <footer className="bg-white border-t border-gray-100 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

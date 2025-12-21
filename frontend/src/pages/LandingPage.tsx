@@ -248,6 +248,7 @@ const LandingPage = () => {
                 </div>
             </div>
         </div>
+      </div>
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-100 py-12">

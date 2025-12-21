@@ -12,6 +12,7 @@ import Products from './pages/Products';
 import PrivateInventory from './pages/PrivateInventory';
 import Billing from './pages/Billing';
 import Logs from './pages/Logs';
+import BlockchainAudit from './pages/BlockchainAudit';
 import LandingPage from './pages/LandingPage';
 
 const ProtectedRoute = () => {

@@ -15,7 +15,22 @@ export const AIAssistant = () => {
     { role: 'assistant', content: "Hi! I'm your AI inventory assistant. Ask me about stock, prices, or find products!" }
   ]);
   const [input, setInput] = useState('');
-  // ... (lines 17-39 unchanged)
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(scrollToBottom, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
+
+    const userMsg = input;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+    setLoading(true);
     try {
       const response = await client.post('/ai/chat', { 
         message: userMsg,

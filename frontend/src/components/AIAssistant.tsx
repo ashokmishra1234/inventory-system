@@ -5,7 +5,8 @@ import client from '../api/client';
 type Message = {
   role: 'user' | 'assistant';
   content: string;
-  data?: any[]; // Products
+  data?: any[];
+  intent?: string; // Add intent to type
 };
 
 export const AIAssistant = () => {
@@ -14,35 +15,20 @@ export const AIAssistant = () => {
     { role: 'assistant', content: "Hi! I'm your AI inventory assistant. Ask me about stock, prices, or find products!" }
   ]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [messages]);
-
-  const handleSend = async () => {
-    if (!input.trim()) return;
-
-    const userMsg = input;
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
-    setLoading(true);
-
+  // ... (lines 17-39 unchanged)
     try {
       const response = await client.post('/ai/chat', { 
         message: userMsg,
         history: messages.map(m => ({ role: m.role, content: m.content })) 
       });
 
-      const { message, data } = response.data;
+      const { message, data, intent } = response.data; // Capture intent
 
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: message,
-        data: data 
+        data: data,
+        intent: intent // Store it
       }]);
 
     } catch (error: any) {
@@ -100,7 +86,7 @@ export const AIAssistant = () => {
                           <p className="text-sm font-medium text-gray-900 truncate">{product.custom_name || product.name || 'Unknown Item'}</p>
                           <p className="text-xs text-gray-500">
                             Stock: {product.quantity} | ₹{product.price}
-                            {product.discount_rules?.max_percent > 0 && (
+                            {msg.intent === 'discount_inquiry' && product.discount_rules?.max_percent > 0 && (
                                 <span className="ml-2 text-green-600 font-medium bg-green-50 px-1 rounded">
                                     -{product.discount_rules.max_percent}% Off
                                 </span>

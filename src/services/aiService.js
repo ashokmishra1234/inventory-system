@@ -63,8 +63,8 @@ class AIService {
     // 1. Discount Query
     if (q.match(/(discount|disc|offer|kam|less|concession)/)) {
         return {
-            intent: 'price_inquiry',
-            entities: { ...entities, filters: { ...entities.filters } }, // Add special flag if needed? simpler to just treat as price
+            intent: 'discount_inquiry', // Specific intent for UI targeting
+            entities: { ...entities, filters: { ...entities.filters } },
             requires_database: true,
             user_message: null
         };
@@ -73,7 +73,7 @@ class AIService {
     // 2. Price/Availability Query
     if (q.match(/(price|cost|kitne|rupees|rate|dam|daam|hai kya|available|stock|bache|rakha)/)) {
         return {
-            intent: 'price_inquiry',
+            intent: 'availability_check', // Changed from generic price_inquiry
             requires_database: true,
             entities,
             user_message: null

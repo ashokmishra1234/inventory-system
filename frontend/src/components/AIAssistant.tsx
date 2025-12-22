@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageSquare, Send, X, ShoppingBag, Loader2 } from 'lucide-react';
+import { MessageSquare, Send, X, ShoppingBag, Loader2, Mic, Volume2 } from 'lucide-react';
 import client from '../api/client';
 
 type Message = {
@@ -7,7 +7,7 @@ type Message = {
   content: string;
   data?: any[];
   intent?: string;
-  entities?: any; // Add entities to type
+  entities?: any;
 };
 
 export const AIAssistant = () => {
@@ -17,6 +17,7 @@ export const AIAssistant = () => {
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false); // Voice State
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -24,6 +25,43 @@ export const AIAssistant = () => {
   };
 
   useEffect(scrollToBottom, [messages]);
+
+  // --- Voice Logic ---
+  const startListening = () => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-IN'; // Indian English for better recognition
+      recognition.continuous = false;
+      
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+      };
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        setIsListening(false);
+      };
+      
+      recognition.start();
+    } else {
+      alert("Voice input is not supported in this browser.");
+    }
+  };
+
+  const speakResponse = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // Stop any previous speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'hi-IN'; // Hindi/Indian accent for authentic shopkeeper feel
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+  // -------------------
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -39,15 +77,18 @@ export const AIAssistant = () => {
         history: messages.map(m => ({ role: m.role, content: m.content })) 
       });
 
-      const { message, data, intent, entities } = response.data; // Capture entities
+      const { message, data, intent, entities } = response.data;
 
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: message,
         data: data,
         intent: intent,
-        entities: entities // Store it
+        entities: entities
       }]);
+      
+      // Auto-speak the response if using voice (optional, or just provide button)
+      // speakResponse(message); 
 
     } catch (error: any) {
       console.error('AI Chat Error:', error);
@@ -83,13 +124,24 @@ export const AIAssistant = () => {
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                 <div 
-                  className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm ${
+                  className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm relative group ${
                     msg.role === 'user' 
                       ? 'bg-blue-600 text-white rounded-br-none' 
                       : 'bg-white border border-gray-200 text-gray-700 rounded-bl-none shadow-sm'
                   }`}
                 >
                   {msg.content}
+                  
+                  {/* Speaker Button for Assistant (Only visible on hover or always for better UX) */}
+                  {msg.role === 'assistant' && (
+                      <button 
+                        onClick={() => speakResponse(msg.content)}
+                        className="absolute -right-8 top-1 p-1 text-gray-400 hover:text-blue-600 transition-colors opacity-0 group-hover:opacity-100"
+                        title="Read Aloud"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
+                  )}
                 </div>
                 
                 {/* Product Cards in Chat */}
@@ -141,12 +193,20 @@ export const AIAssistant = () => {
 
           {/* Input Area */}
           <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
+            <button 
+                onClick={startListening}
+                className={`p-2.5 rounded-xl transition-all ${isListening ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                title="Speak Query"
+            >
+                <Mic className="w-5 h-5" />
+            </button>
+
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Ask about inventory..."
+              placeholder={isListening ? "Listening..." : "Ask about inventory..."}
               className="flex-1 bg-gray-100 text-gray-900 border-0 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
             />
             <button 

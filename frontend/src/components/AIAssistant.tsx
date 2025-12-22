@@ -103,16 +103,23 @@ export const AIAssistant = () => {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{product.custom_name || product.name || 'Unknown Item'}</p>
                           <p className="text-xs text-gray-500">
-                            Stock: {product.quantity} | ₹{product.price}
-                            {msg.intent === 'discount_inquiry' && product.discount_rules?.max_percent > 0 && (
-                                <span className="ml-2 text-green-600 font-medium bg-green-50 px-1 rounded">
-                                    {/* Logic: If user asked for LESS than max, show REQUESTED. Else show MAX. */}
-                                    {msg.entities?.requested_discount && msg.entities.requested_discount <= product.discount_rules.max_percent ? (
-                                        <>Approved: -{msg.entities.requested_discount}% Off</>
-                                    ) : (
-                                        <>-{product.discount_rules.max_percent}% Off</>
-                                    )}
-                                </span>
+                            Stock: {product.quantity} | 
+                            {msg.intent === 'discount_inquiry' && product.discount_rules?.max_percent > 0 ? (
+                                <>
+                                    <span className="line-through text-gray-400 mr-1">₹{product.price}</span>
+                                    <span className="font-bold text-gray-900 mr-2">
+                                        ₹{Math.round(product.price * (1 - ((msg.entities?.requested_discount && msg.entities.requested_discount <= product.discount_rules.max_percent ? msg.entities.requested_discount : product.discount_rules.max_percent) / 100)))}
+                                    </span>
+                                    <span className="text-green-600 font-medium bg-green-50 px-1 rounded">
+                                        {msg.entities?.requested_discount && msg.entities.requested_discount <= product.discount_rules.max_percent ? (
+                                            <>Approved: -{msg.entities.requested_discount}%</>
+                                        ) : (
+                                            <>-{product.discount_rules.max_percent}% Off</>
+                                        )}
+                                    </span>
+                                </>
+                            ) : (
+                                <>₹{product.price}</>
                             )}
                           </p>
                         </div>

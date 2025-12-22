@@ -97,8 +97,15 @@ export const AIAssistant = () => {
                           <ShoppingBag className="w-4 h-4" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
-                          <p className="text-xs text-gray-500">Stock: {product.quantity} | ₹{product.price}</p>
+                          <p className="text-sm font-medium text-gray-900 truncate">{product.custom_name || product.name || 'Unknown Item'}</p>
+                          <p className="text-xs text-gray-500">
+                            Stock: {product.quantity} | ₹{product.price}
+                            {product.discount_rules?.max_percent > 0 && (
+                                <span className="ml-2 text-green-600 font-medium bg-green-50 px-1 rounded">
+                                    -{product.discount_rules.max_percent}% Off
+                                </span>
+                            )}
+                          </p>
                         </div>
                       </div>
                     ))}

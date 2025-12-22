@@ -18,13 +18,11 @@ const LandingPage = () => {
               </span>
             </div>
             <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-8 leading-tight">
-              Manage your stock <br className="hidden md:block" />
-              with <span className="text-blue-600">just a scan.</span>
+              Fulfill the velocity products or SKUs <br className="hidden md:block" />
+              with <span className="text-blue-600">real-time demand</span> in your nearby Area!
             </h1>
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Take control of your inventory with our AI-powered platform. 
-              Track items, generate bills, and audit everything on the blockchain. 
-              Making retail hassle-free.
+              Using advanced Technologies like Blockchain, AI Demand prediction, and IoT Device setup.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link

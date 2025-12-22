@@ -1,0 +1,75 @@
+AI-POWERED RETAIL INVENTORY & SALES AGENT PLATFORM
+==================================================
+
+SYSTEM REQUIREMENTS
+-------------------
+1.  Node.js: v18.0.0 or higher
+2.  Package Manager: npm (v9+) or pnpm (v8+)
+3.  Database: Supabase (PostgreSQL)
+4.  Blockchain: Ethereum Sepolia Testnet (via Alchemy/Infura)
+5.  Operating System: Windows, macOS, or Linux
+
+TECH STACK
+----------
+Frontend: React.js, Vite, Tailwind CSS, Lucide React
+Backend: Node.js, Express.js
+Database: Supabase (PostgreSQL + Auth)
+Blockchain: Ethers.js, Solidity
+Authentication: Supabase Auth (JWT)
+Payments: Razorpay
+
+REQUIRED ENVIRONMENT VARIABLES (.env)
+--------------------------------------
+[Backend]
+PORT=5000
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+JWT_SECRET=your_jwt_secret
+BLOCKCHAIN_ENABLED=true
+ETHEREUM_RPC_URL=your_sepolia_rpc_url
+CONTRACT_ADDRESS=your_smart_contract_address
+BACKEND_PRIVATE_KEY=your_wallet_private_key
+CHAIN_ID=11155111
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_secret
+
+[Frontend]
+VITE_API_URL=http://localhost:5000
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+
+PROJECT DEPENDENCIES
+--------------------
+
+[BACKEND CORE]
+- express: Web framework for Node.js
+- @supabase/supabase-js: Supabase client
+- ethers: Blockchain interaction library
+- razorpay: Payment gateway integration
+- cors: Cross-Origin Resource Sharing
+- dotenv: Environment variable management
+- helmet: Security headers
+- joi: Data validation
+- morgan: HTTP request logger
+
+[FRONTEND CORE]
+- react: UI Library
+- react-dom: React DOM renderer
+- react-router-dom: Client-side routing
+- axios: HTTP Client
+- tailwindcss: Utility-first CSS framework
+- lucide-react: Icon library
+- react-hook-form: Form state management
+- zod: Schema validation
+- react-hot-toast: Toast notifications
+
+INSTALLATION & RUN
+------------------
+1. Install Dependencies:
+   Backend: npm install
+   Frontend: cd frontend && npm install
+
+2. Run Application:
+   Backend: npm run dev
+   Frontend: cd frontend && npm run dev

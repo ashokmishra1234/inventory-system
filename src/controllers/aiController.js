@@ -12,7 +12,8 @@ const chat = async (req, res) => {
     let systemResponse = {
       message: aiResponse.user_message || "Here is what I found:",
       data: null,
-      intent: aiResponse.intent
+      intent: aiResponse.intent,
+      entities: aiResponse.entities // Pass entities (including requested_discount)
     };
 
     // 2. If valid search intent, generate and run SQL

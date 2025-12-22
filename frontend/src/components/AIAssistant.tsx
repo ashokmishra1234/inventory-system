@@ -6,7 +6,8 @@ type Message = {
   role: 'user' | 'assistant';
   content: string;
   data?: any[];
-  intent?: string; // Add intent to type
+  intent?: string;
+  entities?: any; // Add entities to type
 };
 
 export const AIAssistant = () => {
@@ -31,19 +32,21 @@ export const AIAssistant = () => {
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     setLoading(true);
+
     try {
       const response = await client.post('/ai/chat', { 
         message: userMsg,
         history: messages.map(m => ({ role: m.role, content: m.content })) 
       });
 
-      const { message, data, intent } = response.data; // Capture intent
+      const { message, data, intent, entities } = response.data; // Capture entities
 
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: message,
         data: data,
-        intent: intent // Store it
+        intent: intent,
+        entities: entities // Store it
       }]);
 
     } catch (error: any) {
@@ -103,7 +106,12 @@ export const AIAssistant = () => {
                             Stock: {product.quantity} | ₹{product.price}
                             {msg.intent === 'discount_inquiry' && product.discount_rules?.max_percent > 0 && (
                                 <span className="ml-2 text-green-600 font-medium bg-green-50 px-1 rounded">
-                                    -{product.discount_rules.max_percent}% Off
+                                    {/* Logic: If user asked for LESS than max, show REQUESTED. Else show MAX. */}
+                                    {msg.entities?.requested_discount && msg.entities.requested_discount <= product.discount_rules.max_percent ? (
+                                        <>Approved: -{msg.entities.requested_discount}% Off</>
+                                    ) : (
+                                        <>-{product.discount_rules.max_percent}% Off</>
+                                    )}
                                 </span>
                             )}
                           </p>

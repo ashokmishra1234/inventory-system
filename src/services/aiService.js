@@ -62,9 +62,19 @@ class AIService {
 
     // 1. Discount Query
     if (q.match(/(discount|disc|offer|kam|less|concession)/)) {
+        // Extract requested value if present (e.g., "10% discount" or "50 rs less")
+        const numberMatch = q.match(/(\d+)/);
+        const isPercent = q.includes('%') || q.includes('percent');
+        const requestedValue = numberMatch ? parseInt(numberMatch[0]) : null;
+
         return {
             intent: 'discount_inquiry', // Specific intent for UI targeting
-            entities: { ...entities, filters: { ...entities.filters } },
+            entities: { 
+                ...entities, 
+                filters: { ...entities.filters },
+                requested_discount: requestedValue, // Pass this to frontend
+                discount_type: isPercent ? 'percent' : 'flat'
+            },
             requires_database: true,
             user_message: null
         };

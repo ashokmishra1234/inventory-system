@@ -45,8 +45,10 @@ export const AIAssistant = () => {
         data: data 
       }]);
 
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I encountered an error checking the brain." }]);
+    } catch (error: any) {
+      console.error('AI Chat Error:', error);
+      const errorMsg = error.response?.data?.message || error.message || "Sorry, I encountered an error checking the brain.";
+      setMessages(prev => [...prev, { role: 'assistant', content: `Error: ${errorMsg}` }]);
     } finally {
       setLoading(false);
     }
@@ -122,7 +124,7 @@ export const AIAssistant = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Ask about inventory..."
-              className="flex-1 bg-gray-100 border-0 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+              className="flex-1 bg-gray-100 text-gray-900 border-0 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
             />
             <button 
               onClick={handleSend}

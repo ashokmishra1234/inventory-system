@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Activity, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import client from '../api/client';
+
 
 interface BlockchainStats {
   enabled: boolean;
@@ -19,12 +21,15 @@ const BlockchainAudit = () => {
 
   const fetchBlockchainStats = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/blockchain/stats`);
-      const data = await response.json();
-      setStats(data);
+      const response = await client.get('/blockchain/stats');
+      setStats(response.data);
       setLoading(false);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    } catch (err: any) {
+      console.error('Blockchain fetch error:', err);
+      // Debug info: show what URL was attempted
+      const attemptedUrl = client.defaults.baseURL + '/blockchain/stats';
+      const msg = `Failed to connect to ${attemptedUrl}. Details: ${err.message}`;
+      setError(msg);
       setLoading(false);
     }
   };

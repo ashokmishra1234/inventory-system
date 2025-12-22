@@ -15,8 +15,8 @@ class AIService {
       this.model = null;
     } else {
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        // Use a model optimized for speed and cost, similar to flash-lite
-        this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        // Using gemini-2.5-flash (Newest available in your list)
+        this.model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     }
     
     instance = this;
@@ -41,7 +41,7 @@ class AIService {
         intent: 'unknown',
         sub_intent: 'error_fallback',
         entities: { product_keywords: [], filters: {} },
-        user_message: "I'm having trouble connecting to my brain right now. Please try again."
+        user_message: `I'm having trouble connecting to my brain right now. Please try again. (Details: ${error.message})`
       };
     }
   }

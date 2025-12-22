@@ -31,13 +31,20 @@ const chat = async (req, res) => {
         // BETTER APPROACH FOR NODE.JS + SUPABASE: Build query dynamically using Supabase Query Builder
         // instead of raw SQL string. Refactoring logic slightly on the fly here to be safer/easier.
         
-        let queryBuilder = supabase.from('products').select('*');
+        // BETTER APPROACH: Query 'retailer_inventory' which holds the actual data shown in dashboard
+        
+        let queryBuilder = supabase.from('retailer_inventory').select('*').eq('retailer_id', req.user.id);
         const { entities } = aiResponse;
 
         // Apply filters
+        console.log('🤖 AI Response:', JSON.stringify(aiResponse, null, 2));
+
+        // Apply filters
         if (entities.product_keywords && entities.product_keywords.length) {
-            const kw = entities.product_keywords[0]; // Take primary keyword
-            queryBuilder = queryBuilder.ilike('name', `%${kw}%`); // Simple search
+            const kw = entities.product_keywords[0]; 
+            // Search in custom_name OR description (if it exists, otherwise just custom_name)
+            // retailer_inventory usually has 'custom_name'
+            queryBuilder = queryBuilder.ilike('custom_name', `%${kw}%`);
         }
 
         if (entities.filters) {

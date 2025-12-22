@@ -128,7 +128,7 @@ class BlockchainService {
    */
   async getTotalEvents() {
     if (!blockchainConfig.isEnabled()) {
-      return { error: 'Blockchain not enabled' };
+      return 0;
     }
 
     try {

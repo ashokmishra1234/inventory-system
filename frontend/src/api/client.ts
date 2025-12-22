@@ -1,7 +1,15 @@
 import axios from 'axios';
 
+const getBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL;
+  // Dynamic fallback: If on localhost, use localhost:5000. 
+  // If on network IP (e.g. 192.168.1.5), try connecting to that IP on port 5000.
+  const hostname = window.location.hostname;
+  return `http://${hostname}:5000`;
+};
+
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

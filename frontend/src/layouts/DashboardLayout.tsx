@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LayoutDashboard, Package, ClipboardList, LogOut, Menu, X, Link as LinkIcon } from 'lucide-react';
 import { cn } from '../utils/cn';
+import { AIAssistant } from '../components/AIAssistant';
 
 export const DashboardLayout = () => {
     const { user, logout } = useAuth();
@@ -100,6 +101,7 @@ export const DashboardLayout = () => {
             <main className="flex-1 overflow-auto p-4 pt-20 md:p-8 md:pt-8 w-full">
                 <Outlet />
             </main>
+            <AIAssistant />
         </div>
     );
 };

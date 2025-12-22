@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageSquare, Send, X, ShoppingBag, Loader2 } from 'lucide-react';
-import { client } from '../api/client';
+import client from '../api/client';
 
 type Message = {
   role: 'user' | 'assistant';

@@ -59,8 +59,17 @@ const chat = async (req, res) => {
         if (error) throw error;
         systemResponse.data = data;
         
-        if (!data.length) {
-            systemResponse.message = "I couldn't find any products matching that description.";
+        // 3. Generate Natural Language Response using RAG
+        const naturalResponse = await aiService.generateResponse(
+            message, 
+            data, 
+            history
+        );
+
+        if (naturalResponse) {
+            systemResponse.message = naturalResponse;
+        } else if (!data.length) {
+             systemResponse.message = "I couldn't find any products matching that description.";
         }
 
       } catch (dbError) {

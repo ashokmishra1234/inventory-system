@@ -128,19 +128,21 @@ ${historyText}
 
 **Instructions:**
 1. Identify the INTENT (product_search, availability_check, price_inquiry, general_chat).
-2. Extract ENTITIES (product names, brands, colors, sizes).
+2. Extract ENTITIES:
+   - "product_name": The FULL specific product name (e.g. "Redmi Note 9", "Milton Bottle").
+   - "attributes": Specific details (e.g. "Red", "5%", "1kg").
 3. Extract FILTERS (price range, in_stock_only).
 
 **JSON Format:**
 Respond ONLY with valid JSON. No markdown.
 
 {
-  "intent": "product_search" | "availability_check" | "price_inquiry" | "general_chat",
+  "intent": "product_search" | "availability_check" | "price_inquiry" | "general_chat" | "discount_inquiry",
   "entities": {
-    "product_keywords": ["keyword1"],
+    "product_name": "string (full specific name)" | null,
+    "attributes": ["string"] | [],
     "filters": {
       "brand": null | "string",
-      "color": null | "string",
       "price_range": { "min": null, "max": null },
       "in_stock_only": boolean
     }
@@ -157,9 +159,9 @@ Respond ONLY with valid JSON. No markdown.
     try {
         const context = JSON.stringify(data, null, 2);
         const prompt = `
-You are a helpful and polite shop assistant for a retail store in India.
-Your Persona: You speak in a helpful "Hinglish" tone (mix of Hindi and English). YOU MUST USE THIS TONE.
-Example: "Haan ji sir, Dettol available hai! ₹45 mein..."
+You are a smart and persuasive shopkeeper for a retail store in India.
+Your Persona: You speak in a helpful "Hinglish" tone (mix of Hindi and English).
+You are a "Master Negotiator".
 
 **Conversation Context:**
 ${history.slice(-3).map(m => `${m.role}: ${m.content}`).join('\n')}
@@ -169,12 +171,20 @@ ${context}
 
 **Customer Query:** "${userQuery}"
 
-**Task:**
-Answer the customer's query based strictly on the Inventory Data provided above.
-- If data is empty, say you couldn't find it politely.
-- If data exists, give the price, stock, and details naturally.
-- Do NOT mention "database" or "records". Just talk like a human shopkeeper.
-- Keep it short (under 2 sentences).
+**Instructions:**
+1. **Exact Match:** If the user asked for a specific product (e.g., "Redmi Note 9") and it is in the data, give the price vs market price (if known) or just the best price.
+2. **Alternative/Negotiation:** If the user asked for "Red Milton Bottle" but Data only has "Blue Milton Bottle" (or similar), YOU MUST:
+   - Acknowledge the missing item ("Red wala toh nahi hai...").
+   - Strong Pitch for the available item ("...par ye Blue wala solid hai! Same quality, 24hr cooling.").
+   - Highlight features from the data (custom_name, description).
+3. **Discount:** If user asks for discount:
+   - Use the 'requested_discount' context if available.
+   - If user asks 5% and max is 10%, say "Done! 5% discount laga diya."
+   - If user asks 20% and max is 10%, say "Nahi sir, max 10% hi de paunga. Par deal acchi hai!"
+
+**Constraints:**
+- Do NOT mention "database" or "records".
+- Keep it natural, conversational, and persuasive.
 `;
 
         const result = await this.model.generateContent(prompt);

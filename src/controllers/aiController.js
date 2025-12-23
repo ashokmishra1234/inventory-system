@@ -37,27 +37,53 @@ const chat = async (req, res) => {
         let queryBuilder = supabase.from('retailer_inventory').select('*').eq('retailer_id', req.user.id);
         const { entities } = aiResponse;
 
-        // Apply filters
-        console.log('🤖 AI Response:', JSON.stringify(aiResponse, null, 2));
+        console.log('🤖 AI Response Entities:', JSON.stringify(entities, null, 2));
 
-        // Apply filters
-        if (entities.product_keywords && entities.product_keywords.length) {
-            const kw = entities.product_keywords[0]; 
-            // Search in custom_name OR description (if it exists, otherwise just custom_name)
-            // retailer_inventory usually has 'custom_name'
-            queryBuilder = queryBuilder.ilike('custom_name', `%${kw}%`);
+        // --- TWO-PHASE SEARCH STRATEGY ---
+        let data = [];
+        let error = null;
+
+        // Phase 1: Strict Search (If product_name is provided)
+        if (entities.product_name) {
+            console.log('🔍 Phase 1: Strict Search for:', entities.product_name);
+            let strictQuery = queryBuilder.ilike('custom_name', `%${entities.product_name}%`);
+            
+            // Apply other filters to strict query
+            if (entities.filters?.price_range?.max) strictQuery = strictQuery.lte('price', entities.filters.price_range.max);
+            if (entities.filters?.in_stock_only) strictQuery = strictQuery.gt('quantity', 0);
+
+            const result = await strictQuery.limit(5);
+            if (result.error) throw result.error;
+            data = result.data;
         }
 
-        if (entities.filters) {
-            const f = entities.filters;
-            if (f.price_range?.max) queryBuilder = queryBuilder.lte('price', f.price_range.max);
-            if (f.price_range?.min) queryBuilder = queryBuilder.gte('price', f.price_range.min);
-            if (f.in_stock_only) queryBuilder = queryBuilder.gt('quantity', 0);
-        }
+        // Phase 2: Fallback / Broad Search (If Phase 1 found nothing OR no specific name)
+        if (!data || data.length === 0) {
+            console.log('🔍 Phase 2: Broad/Fallback Search');
+            // Reset query builder
+            let broadQuery = supabase.from('retailer_inventory').select('*').eq('retailer_id', req.user.id);
+            
+            // logic: search for the first word of product_name or use attributes
+            let searchTerm = null;
+            if (entities.product_name) {
+                searchTerm = entities.product_name.split(' ')[0]; // e.g. "Redmi", "Milton"
+            } else if (entities.product_keywords && entities.product_keywords.length > 0) {
+                searchTerm = entities.product_keywords[0];
+            }
 
-        const { data, error } = await queryBuilder.limit(10);
+            if (searchTerm) {
+                 broadQuery = broadQuery.ilike('custom_name', `%${searchTerm}%`);
+            }
+
+            // Apply filters
+            if (entities.filters?.price_range?.max) broadQuery = broadQuery.lte('price', entities.filters.price_range.max);
+            if (entities.filters?.in_stock_only) broadQuery = broadQuery.gt('quantity', 0);
+            
+            const result = await broadQuery.limit(10);
+            if (result.error) throw result.error;
+            data = result.data;
+        }
         
-        if (error) throw error;
         systemResponse.data = data;
         
         // 3. Generate Natural Language Response using RAG

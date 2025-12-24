@@ -203,10 +203,13 @@ ${context}
 
 === SPECIFIC INSTRUCTIONS FOR THIS INTERACTION ===
 1. **Analyze Data first:** Use the provided 'Inventory Data Found' to answer.
-2. **Exact Match:** If found, pitch it with value (Price, Specs).
-3. **Alternatives/Negotiation:** If the exact product is missing but alternatives exist in data, PITCH the alternative (e.g. "Red isn't here, but Blue is great because...").
-4. **Discount:** Use 'requested_discount' from entities. If < max, approve. If > max, negotiate politely ("Max I can do is 10%...").
-5. **Closing:** Always try to close the sale or ask the next logical question.
+2. **Broad Match / Needs Assessment:** If the user asks for a general category (e.g. "Best pen", "Phone dikhao") and you have multiple options:
+   - Mention you have good options.
+   - **CRITICAL:** Ask for their **Budget/Price Range** or specific preference ("Aapka budget kya hai?" or "Kis range mein dikhaun?").
+3. **Exact Match:** If found, pitch it with value (Price, Specs).
+4. **Alternatives/Negotiation:** If the exact product is missing but alternatives exist in data, PITCH the alternative (e.g. "Red isn't here, but Blue is great because...").
+5. **Discount:** Use 'requested_discount' from entities. If < max, approve. If > max, negotiate politely ("Max I can do is 10%...").
+6. **Closing:** Always try to close the sale or ask the next logical question.
 `;
 
         const result = await this.model.generateContent(prompt);

@@ -8,6 +8,8 @@ type Message = {
   data?: any[];
   intent?: string;
   entities?: any;
+  type?: string;        // For ESCALATION_CREATED
+  escalationId?: string; // For tracking
 };
 
 export const AIAssistant = () => {
@@ -77,14 +79,16 @@ export const AIAssistant = () => {
         history: messages.map(m => ({ role: m.role, content: m.content })) 
       });
 
-      const { message, data, intent, entities } = response.data;
+      const { message, data, intent, entities, type, escalationId } = response.data;
 
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: message,
         data: data,
         intent: intent,
-        entities: entities
+        entities: entities,
+        type: type,
+        escalationId: escalationId
       }]);
       
       // Auto-speak the response if using voice (optional, or just provide button)
@@ -178,6 +182,23 @@ export const AIAssistant = () => {
                       </div>
                     ))}
                   </div>
+                )}
+
+                {/* Escalation Card */}
+                {msg.type === 'ESCALATION_CREATED' && (
+                    <div className="mt-3 w-full bg-orange-50 border border-orange-200 rounded-xl p-4 shadow-sm animate-in fade-in slide-in-from-bottom-2">
+                        <div className="flex items-center gap-2 mb-2 text-orange-700">
+                            <div className="bg-orange-100 p-1.5 rounded-full">
+                                <span className="font-bold text-lg">!</span> 
+                            </div>
+                            <span className="font-semibold text-sm">Escalation Request Sent</span>
+                        </div>
+                        <div className="text-xs text-gray-600 space-y-1">
+                            <p><strong>Escalation ID:</strong> <span className="font-mono bg-white px-1 rounded border">{msg.escalationId}</span></p>
+                            <p><strong>Status:</strong> <span className="text-orange-600 font-medium bg-white px-1 rounded border border-orange-200">PENDING APPROVAL</span></p>
+                            <p className="italic mt-1">Request exceeds allowed limit. Sent to admin.</p>
+                        </div>
+                    </div>
                 )}
               </div>
             ))}

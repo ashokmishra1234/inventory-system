@@ -84,7 +84,62 @@ const chat = async (req, res) => {
             data = result.data;
         }
         
+
+        
         systemResponse.data = data;
+
+        // --- DISCOUNT ESCALATION LOGIC ---
+        if (aiResponse.intent === 'discount_inquiry' && data.length > 0) {
+            const product = data[0]; 
+            // Check for explicitly requested discount (either from local regex or AI/attributes)
+            let requested = aiResponse.entities.requested_discount;
+            
+            // Fallback: try to parseInt from attributes if not set (e.g. "50%")
+            if (!requested && aiResponse.entities.attributes) {
+                const attr = aiResponse.entities.attributes.find(a => a.includes('%'));
+                if (attr) requested = parseInt(attr);
+            }
+
+            // Default max discount from DB or 0
+            const maxDiscount = product.discount_rules?.max_percent || 0;
+
+            // If user asked for a specific amount and it exceeds limit
+            if (requested && requested > maxDiscount) {
+                console.log(`⚠️ Escalation Triggered: Request ${requested}% > Max ${maxDiscount}%`);
+                
+                const escalationId = `ESCL-${Date.now()}`;
+                
+                const { error: insertError } = await supabase
+                    .from('discount_escalations')
+                    .insert({
+                        escalation_id: escalationId,
+                        product_id: product.id,
+                        product_name: product.custom_name || product.name,
+                        requested_discount: requested,
+                        allowed_discount: maxDiscount,
+                        retailer_id: req.user.id,
+                        status: 'PENDING'
+                    });
+
+                if (!insertError) {
+                     // Override response for escalation
+                     systemResponse.type = "ESCALATION_CREATED";
+                     systemResponse.message = `Requested discount (${requested}%) exceeds the allowed limit (${maxDiscount}%). An escalation request (#${escalationId}) has been sent for approval.`;
+                     systemResponse.escalationId = escalationId;
+                     systemResponse.status = "PENDING";
+                     systemResponse.allowedDiscount = maxDiscount;
+                     
+                     // Return immediately (Skip AI personality / Negotiation)
+                     return res.json(systemResponse);
+                } else {
+                    console.error('Failed to create escalation:', insertError);
+                    
+                    // Return error to user to help debugging (since we are in dev mode)
+                    systemResponse.message = `⚠️ **System Error:** Could not process escalation request.\n\n**Reason:** ${insertError.message || "Database Insert Failed"}.\n\n*Target Table:* \`discount_escalations\`\n*Hint:* Did you run the migration SQL?`;
+                    return res.json(systemResponse);
+                }
+            }
+        }
         
         // 3. Generate Natural Language Response using RAG
         const naturalResponse = await aiService.generateResponse(

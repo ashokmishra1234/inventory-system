@@ -79,6 +79,13 @@ export const DashboardLayout = () => {
                             onClick={() => setIsSidebarOpen(false)}
                         />
                     )}
+                    <NavItem 
+                        to="/dashboard/escalations" 
+                        icon={<ClipboardList size={20}/>} 
+                        label="Escalations" 
+                        active={location.pathname === '/dashboard/escalations'} 
+                        onClick={() => setIsSidebarOpen(false)}
+                    />
                 </nav>
 
                 <div className="pt-4 border-t border-slate-800">

@@ -150,4 +150,30 @@ const removeInventory = async (req, res) => {
     }
 };
 
-module.exports = { getMyInventory, addToInventory, updateInventory, removeInventory };
+// @desc    Get Discount Escalations
+// @route   GET /api/escalations
+// @access  Private
+const getEscalations = async (req, res) => {
+    try {
+        console.log(`🔍 Fetching escalations for Retailer ID: ${req.user.id}`);
+
+        const { data, error } = await supabase
+            .from('discount_escalations')
+            .select('*')
+            .eq('retailer_id', req.user.id)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("❌ Fetch Error:", error);
+            throw error;
+        }
+
+        console.log(`✅ Found ${data?.length || 0} escalations.`);
+        res.json(data);
+    } catch (err) {
+        console.error("❌ Controller Error:", err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+module.exports = { getMyInventory, addToInventory, updateInventory, removeInventory, getEscalations };

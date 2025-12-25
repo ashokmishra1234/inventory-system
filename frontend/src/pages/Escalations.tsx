@@ -84,7 +84,7 @@ export default function Escalations() {
                     ) : (
                         escalations.map((esc) => (
                             <tr key={esc.escalation_id} className="hover:bg-gray-50 transition-colors">
-                                <td className="p-4 font-mono text-sm">{esc.escalation_id}</td>
+                                <td className="p-4 font-mono text-sm text-gray-700">{esc.escalation_id}</td>
                                 <td className="p-4 font-medium text-gray-900">{esc.product_name}</td>
                                 <td className="p-4 text-red-600 font-bold">{esc.requested_discount}%</td>
                                 <td className="p-4 text-gray-500">{esc.allowed_discount}%</td>

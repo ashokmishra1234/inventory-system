@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import client from '../api/client';
 import { CheckCircle, XCircle, Clock } from 'lucide-react';
 // import supabase from '../config/supabase'; // Removed unused

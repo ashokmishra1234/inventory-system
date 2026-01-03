@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageSquare, Send, X, ShoppingBag, Loader2, Mic, Volume2 } from 'lucide-react';
+import { MessageSquare, Send, X, ShoppingBag, Loader2, Mic, Volume2, Image as ImageIcon, Camera } from 'lucide-react';
 import client from '../api/client';
 
 type Message = {
@@ -8,19 +8,21 @@ type Message = {
   data?: any[];
   intent?: string;
   entities?: any;
-  type?: string;        // For ESCALATION_CREATED
+  type?: string;        // For ESCALATION_CREATED, IMAGE_ANALYSIS
   escalationId?: string; // For tracking
+  notes?: string;       // For Image Analysis notes
 };
 
 export const AIAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Hi! I'm your AI inventory assistant. Ask me about stock, prices, or find products!" }
+    { role: 'assistant', content: "Hi! I'm your AI inventory assistant. Ask me about stock, prices, or upload an image to scan!" }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false); // Voice State
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -65,6 +67,52 @@ export const AIAssistant = () => {
   };
   // -------------------
 
+  // --- Image Logic ---
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image is too large. Max 5MB allowed.");
+      return;
+    }
+
+    setMessages(prev => [...prev, { role: 'user', content: `Uploaded Image: ${file.name}` }]);
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await client.post('/ai/analyze-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      const { message, data, type, notes } = response.data;
+
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: message,
+        data: data, // Items list
+        type: type, // IMAGE_ANALYSIS
+        notes: notes
+      }]);
+
+    } catch (error: any) {
+      console.error('Image Analysis Error:', error);
+       setMessages(prev => [...prev, { role: 'assistant', content: `Error analyzing image: ${error.message || "Unknown error"}` }]);
+    } finally {
+      setLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = ''; // Reset input
+    }
+  };
+  // -------------------
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -91,9 +139,6 @@ export const AIAssistant = () => {
         escalationId: escalationId
       }]);
       
-      // Auto-speak the response if using voice (optional, or just provide button)
-      // speakResponse(message); 
-
     } catch (error: any) {
       console.error('AI Chat Error:', error);
       const errorMsg = error.response?.data?.message || error.message || "Sorry, I encountered an error checking the brain.";
@@ -136,7 +181,7 @@ export const AIAssistant = () => {
                 >
                   {msg.content}
                   
-                  {/* Speaker Button for Assistant (Only visible on hover or always for better UX) */}
+                  {/* Speaker Button */}
                   {msg.role === 'assistant' && (
                       <button 
                         onClick={() => speakResponse(msg.content)}
@@ -148,8 +193,8 @@ export const AIAssistant = () => {
                   )}
                 </div>
                 
-                {/* Product Cards in Chat */}
-                {msg.data && msg.data.length > 0 && (
+                {/* Product Cards (Standard) */}
+                {msg.data && msg.data.length > 0 && !msg.type && (
                   <div className="mt-3 w-full space-y-2">
                     {msg.data.map((product: any) => (
                       <div key={product.id} className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3 text-left hover:border-blue-300 transition-colors cursor-pointer">
@@ -159,29 +204,37 @@ export const AIAssistant = () => {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{product.custom_name || product.name || 'Unknown Item'}</p>
                           <p className="text-xs text-gray-500">
-                            Stock: {product.quantity} | 
-                            {msg.intent === 'discount_inquiry' && product.discount_rules?.max_percent > 0 ? (
-                                <>
-                                    <span className="line-through text-gray-400 mr-1">₹{product.price}</span>
-                                    <span className="font-bold text-gray-900 mr-2">
-                                        ₹{Math.round(product.price * (1 - ((msg.entities?.requested_discount && msg.entities.requested_discount <= product.discount_rules.max_percent ? msg.entities.requested_discount : product.discount_rules.max_percent) / 100)))}
-                                    </span>
-                                    <span className="text-green-600 font-medium bg-green-50 px-1 rounded">
-                                        {msg.entities?.requested_discount && msg.entities.requested_discount <= product.discount_rules.max_percent ? (
-                                            <>Approved: -{msg.entities.requested_discount}%</>
-                                        ) : (
-                                            <>-{product.discount_rules.max_percent}% Off</>
-                                        )}
-                                    </span>
-                                </>
-                            ) : (
-                                <>₹{product.price}</>
-                            )}
+                            Stock: {product.quantity} | ₹{product.price}
                           </p>
                         </div>
                       </div>
                     ))}
                   </div>
+                )}
+
+                {/* Detected Items List (IMAGE_ANALYSIS) */}
+                {msg.type === 'IMAGE_ANALYSIS' && msg.data && (
+                    <div className="mt-3 w-full bg-indigo-50 border border-indigo-100 rounded-xl p-3 shadow-sm animate-in fade-in">
+                         <div className="flex items-center gap-2 mb-2 text-indigo-800">
+                            <Camera className="w-4 h-4" />
+                            <span className="font-semibold text-xs uppercase tracking-wide">Detected Inventory</span>
+                        </div>
+                        <div className="space-y-2">
+                            {msg.data.map((item: any, i: number) => (
+                                <div key={i} className="bg-white p-2 rounded border border-indigo-100 flex justify-between items-center text-sm">
+                                    <div>
+                                        <p className="font-medium text-gray-900">{item.name}</p>
+                                        <p className="text-xs text-gray-500">{item.category}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="font-bold text-indigo-600">x{item.quantity_estimate}</span>
+                                        <p className="text-[10px] text-gray-400">{Math.round(item.confidence * 100)}% Conf.</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        {msg.notes && <p className="mt-2 text-xs text-gray-500 italic border-t border-indigo-100 pt-1">{msg.notes}</p>}
+                    </div>
                 )}
 
                 {/* Escalation Card */}
@@ -214,10 +267,28 @@ export const AIAssistant = () => {
 
           {/* Input Area */}
           <div className="p-3 bg-white border-t border-gray-100 flex gap-2">
+            <input 
+                type="file" 
+                ref={fileInputRef} 
+                className="hidden" 
+                accept="image/*"
+                onChange={handleFileChange}
+            />
+
+            <button 
+                onClick={handleImageClick}
+                className="p-2.5 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-indigo-600 transition-all"
+                title="Upload Image"
+                disabled={loading}
+            >
+                <ImageIcon className="w-5 h-5" />
+            </button>
+
             <button 
                 onClick={startListening}
                 className={`p-2.5 rounded-xl transition-all ${isListening ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
                 title="Speak Query"
+                disabled={loading}
             >
                 <Mic className="w-5 h-5" />
             </button>
@@ -227,8 +298,9 @@ export const AIAssistant = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder={isListening ? "Listening..." : "Ask about inventory..."}
+              placeholder={isListening ? "Listening..." : "Ask or Upload Image..."}
               className="flex-1 bg-gray-100 text-gray-900 border-0 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"
+              disabled={loading}
             />
             <button 
               onClick={handleSend}
@@ -247,7 +319,7 @@ export const AIAssistant = () => {
             onClick={() => setIsOpen(true)}
             className="group flex items-center justify-center w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:scale-110 hover:shadow-blue-500/30 transition-all duration-300"
         >
-            <MessageSquare className="w-7 h-7 group-hover:rotate-12 transition-transform" />
+          <MessageSquare className="w-7 h-7 group-hover:rotate-12 transition-transform" />
         </button>
       )}
     </div>

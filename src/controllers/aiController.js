@@ -168,6 +168,67 @@ const chat = async (req, res) => {
   }
 };
 
+const sharp = require('sharp');
+const crypto = require('crypto');
+
+// Simple in-memory cache: Map<hash, { result, timestamp }>
+const imageCache = new Map();
+const CACHE_TTL = 1000 * 60 * 60; // 1 hour
+
+const analyzeImage = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: "No image file provided" });
+        }
+
+        // 1. Rate Limiting (Per user logic - omitted for simplicity, relying on frontend + natural delay)
+        // Ideally we'd check Redis or DB, but here we can check if user has a pending request?
+        
+        console.log(`📸 Image Uploaded: ${req.file.originalname}, Size: ${req.file.size} bytes`);
+
+        // 2. Resize & Compress Image using Sharp
+        // Max width 1024px, JPEG quality 80
+        const processedBuffer = await sharp(req.file.buffer)
+            .resize({ width: 1024, withoutEnlargement: true })
+            .jpeg({ quality: 80 })
+            .toBuffer();
+
+        // 3. Cache Check (MD5 Hash)
+        const hash = crypto.createHash('md5').update(processedBuffer).digest('hex');
+        const cached = imageCache.get(hash);
+        
+        if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+            console.log('⚡ Returning Cached Image Analysis');
+            return res.json(cached.result); // { items: [], notes: ... }
+        }
+
+        // 4. AI Analysis
+        console.log(`🤖 Sending image to AI (Hash: ${hash})...`);
+        const aiResult = await aiService.analyzeImage(processedBuffer, 'image/jpeg');
+
+        // 5. Store in Cache
+        imageCache.set(hash, {
+            result: aiResult,
+            timestamp: Date.now()
+        });
+
+        res.json({
+            type: 'IMAGE_ANALYSIS',
+            message: aiResult.notes || "Here are the items I detected in the image:",
+            data: aiResult.items,
+            notes: aiResult.notes
+        });
+
+    } catch (error) {
+        console.error('Image Controller Error:', error);
+        res.status(500).json({ 
+            message: "Image analysis failed", 
+            error: error.message 
+        });
+    }
+};
+
 module.exports = {
-  chat
+  chat,
+  analyzeImage
 };

@@ -230,6 +230,72 @@ ${context}
         throw new Error('Invalid JSON response from AI');
     }
   }
+  async analyzeImage(imageBuffer, mimeType) {
+    if (!this.model) return { error: "AI Service not initialized" };
+
+    try {
+        // Use gemini-2.5-flash-lite if possible, or fallback to standard flash
+        // Note: SDK might not support 'lite' string if it's very new, but we try.
+        // If it fails, the previous init would have caught it, or we rely on the init model (Flash).
+        // Since we are reusing `this.model` (which is 2.5-flash), we just use it with specific constraints.
+        
+        const prompt = `
+You are an inventory recognition assistant.
+Your task is to identify only the items clearly visible in the image.
+Do not guess or hallucinate.
+If an item is unclear, mark it as uncertain.
+Return output strictly in JSON format.
+
+Analyze the provided image and list all visible inventory items.
+For each item, provide:
+- item name
+- category
+- estimated quantity
+- confidence score (0 to 1)
+
+If visibility is poor or items overlap, mention it in notes.
+
+Response Format:
+{
+  "items": [
+    {
+      "name": "Product Name",
+      "category": "Category",
+      "quantity_estimate": 5,
+      "confidence": 0.87
+    }
+  ],
+  "notes": "Any ambiguity or low-visibility warning"
+}
+`;
+
+        const imagePart = {
+            inlineData: {
+                data: imageBuffer.toString('base64'),
+                mimeType: mimeType
+            }
+        };
+
+        const result = await this.model.generateContent({
+            contents: [{ role: 'user', parts: [{ text: prompt }, imagePart] }],
+            generationConfig: {
+                maxOutputTokens: 300,
+                temperature: 0.2, // Low temp for factual accuracy
+                responseMimeType: "application/json" // Force JSON mode
+            }
+        });
+
+        const response = await result.response;
+        return JSON.parse(response.text());
+
+    } catch (error) {
+        console.error('Image Analysis Error:', error);
+        return { 
+            items: [], 
+            notes: "Error analyzing image: " + error.message 
+        };
+    }
+  }
 }
 
 module.exports = new AIService();

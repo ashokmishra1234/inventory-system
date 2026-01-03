@@ -21,4 +21,14 @@ router.route('/inventory/:id')
 // Escalation Routes
 router.get('/escalations', protect, getEscalations);
 
+// Image Analysis Route (Multer Config)
+const multer = require('multer');
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+const { chat, analyzeImage } = require('../controllers/aiController');
+
+router.post('/ai/analyze-image', protect, upload.single('image'), analyzeImage);
+
 module.exports = router;
